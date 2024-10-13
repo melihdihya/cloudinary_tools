@@ -223,6 +223,7 @@ def get_base64_image_url(public_id: str) -> str:
     response = requests.get(
         f"https://res.cloudinary.com/{os.getenv("CLOUDINARY_CLOUD_NAME")}/image/upload/f_jpg,w_8,q_70/{public_id}.jpg",
         stream=True,
+        timeout=10,
     )
     response.raise_for_status()
     img = Image.open(io.BytesIO(response.content))
@@ -241,7 +242,7 @@ def upload_folder(folder_path: str, cdn_folder: str = None):
         cdn_folder = os.path.basename(folder_path)
 
     for image_path in image_files:
-        public_id = os.path.basename(image_path)
+        public_id = os.path.basename(image_path).replace(".JPG", "").replace(".jpg", "")
         image = Image.open(image_path)
 
         exif = get_image_exif(image)
