@@ -1,6 +1,8 @@
 """Module for cloudinary api services"""
 
 import re
+import requests
+import base64
 from fractions import Fraction
 import os
 import io
@@ -216,6 +218,22 @@ def update_cdn_image(public_id: str, context: dict) -> dict:
     return cloudinary.uploader.explicit(public_id, type="upload", context=context_str)
 
 
+def get_base64_image_url(public_id: str) -> str:
+    """Generate base64 image url"""
+    response = requests.get(
+        f"https://res.cloudinary.com/{os.getenv("CLOUDINARY_CLOUD_NAME")}/image/upload/f_jpg,w_8,q_70/{public_id}.jpg",
+        stream=True,
+    )
+    response.raise_for_status()
+    img = Image.open(io.BytesIO(response.content))
+    buffer = io.BytesIO()
+    img.save(buffer, format="JPEG", quality=50)
+    buffer.seek(0)
+    base64_image = base64.b64encode(buffer.read()).decode("utf-8")
+    url = f"data:image/jpeg;base64,{base64_image}"
+    return url
+
+
 def upload_folder(folder_path: str, cdn_folder: str = None):
     """Upload all images in a folder to cloudinary"""
     image_files = get_image_files(folder_path)
@@ -250,3 +268,4 @@ def update_cdn_folder(folder: str):
 # Example usage:
 # upload_folder("/Users/melihavci/Desktop/Website/Test_Auto_Upload")
 # update_cdn_folder("Testing")
+# get_base64_image_url("Test_Auto_Upload/DSC_0134.JPG")
