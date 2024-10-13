@@ -1,5 +1,6 @@
 certifi==2024.8.30
 cloudinary==1.41.0
+pillow==10.4.0
 python-dotenv==1.0.1
 six==1.16.0
 urllib3==2.2.3
