@@ -1,18 +1,15 @@
 """Module for cloudinary api services"""
 
 import re
-import requests
 import base64
 from fractions import Fraction
 import os
 import io
-import cloudinary.api
-import cloudinary.search
-import cloudinary.uploader
+import requests
+import cloudinary
 from loguru import logger
 from PIL import Image, ImageFile
 from PIL.ExifTags import TAGS
-import cloudinary
 import dotenv
 
 MAX_FILE_SIZE = 10_485_760
@@ -59,11 +56,11 @@ def convert_shutter_speed(value: float) -> str:
     """Convert shutter speed to fraction"""
     if value < 1:
         return f"{Fraction(value).limit_denominator()}s"
-    else:
-        return f"{int(value)}s"
+
+    return f"{int(value)}s"
 
 
-def clean_software_tag(exif_dict: str) -> dict:
+def clean_software_tag(exif_dict: dict) -> dict:
     """Removes unnecessary version information from the software tag"""
     software_version = None
     if "Adobe" in exif_dict["Software"]:
@@ -151,10 +148,10 @@ def reduce_image_size(image: Image.Image, max_size: int = MAX_FILE_SIZE) -> Imag
     return image
 
 
-def image_to_bytesio(image: Image.Image, format: str = "JPEG") -> io.BytesIO:
+def image_to_bytesio(image: Image.Image, image_format: str = "JPEG") -> io.BytesIO:
     """Convert a Pillow Image to a BytesIO object for upload"""
     img_byte_arr = io.BytesIO()
-    image.save(img_byte_arr, format=format, exif=image.info.get("exif"))
+    image.save(img_byte_arr, format=image_format, exif=image.info.get("exif"))
     img_byte_arr.seek(0)
     return img_byte_arr
 
@@ -221,7 +218,10 @@ def update_cdn_image(public_id: str, context: dict) -> dict:
 def get_base64_image_url(public_id: str) -> str:
     """Generate base64 image url"""
     response = requests.get(
-        f"https://res.cloudinary.com/{os.getenv("CLOUDINARY_CLOUD_NAME")}/image/upload/f_jpg,w_8,q_70/{public_id}.jpg",
+        (
+            f"https://res.cloudinary.com/{os.getenv("CLOUDINARY_CLOUD_NAME")}/"
+            f"image/upload/f_jpg,w_8,q_70/{public_id}.jpg"
+        ),
         stream=True,
         timeout=10,
     )

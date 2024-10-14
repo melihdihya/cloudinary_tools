@@ -1,13 +1,12 @@
 """Test module for cloudinary_service.py"""
 
-import app.cloudinary_service as cs
-import PIL
 from PIL import Image
+import app.cloudinary_service as cs
 
-ZF_IMAGE = "DSC_0234.jpg"
-Z6_IMAGE = "DSC_2506.jpg"
-XT4_IMAGE = "DSCF3503.jpg"
-XT4_LR_IMAGE = "DSCF3256.jpg"
+ZF_IMAGE = "tests/test_data/DSC_0234.jpg"
+Z6_IMAGE = "tests/test_data/DSC_2506.jpg"
+XT4_IMAGE = "tests/test_data/DSCF3503.jpg"
+XT4_LR_IMAGE = "tests/test_data/DSCF3256.jpg"
 
 
 def test_get_image_exif():
