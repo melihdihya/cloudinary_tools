@@ -264,9 +264,3 @@ def update_cdn_folder(folder: str):
         context = extract_exif_from_cdn_image(image_details)
         update_cdn_image(public_id, context)
         logger.info(f"Updated {public_id} in Cloudinary")
-
-
-# Example usage:
-# upload_folder("/Users/melihavci/Desktop/Website/Test_Auto_Upload")
-# update_cdn_folder("Testing")
-# get_base64_image_url("Test_Auto_Upload/DSC_0134.JPG")
